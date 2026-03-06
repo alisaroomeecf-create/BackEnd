@@ -16,23 +16,19 @@ SessionMaker = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSe
 class Base(DeclarativeBase): pass
 
 
-class Categories(Base):
-    __tablename__ = 'category'
+class Registrations (Base):
+    __tablename__ = 'registration'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    products = relationship("Products", back_populates="category")
+    surname = Column(String)
+    patronymic = Column(String)
+    contact = Column(String)
+    mail = Column(String)
+    password = Column(String)
 
-
-class Products(Base):
-    __tablename__ = 'products'
+class Flights (Base):
+    __tablename__ = 'flight'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    price = Column(Integer)
-    stock = Column(Integer)
-    category_id = Column(Integer, ForeignKey('category.id'))
-
-    category = relationship("Categories", back_populates="products")
-    order_items = relationship("OrderItems", back_populates="product")
 
 
 class Customer(Base):
@@ -41,25 +37,11 @@ class Customer(Base):
     name = Column(String)
     contact = Column(String)
 
-    orders = relationship("Orders", back_populates="customer")
-
-
 class Orders(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True, index=True)
     order_at = Column(DateTime, default=datetime.now(), nullable=False)
-    customer_id = Column(Integer, ForeignKey('customer.id'))
-
-    customer = relationship("Customer", back_populates="orders")
-    order_items = relationship("OrderItems", back_populates="order")
-
 
 class OrderItems(Base):
     __tablename__ = 'order_items'
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
-    quantity = Column(Integer)
-
-    order = relationship("Orders", back_populates="order_items")
-    product = relationship("Products", back_populates="order_items")
